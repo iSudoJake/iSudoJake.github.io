@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SudoJake</title>
+<meta name="description" content="SudoJake builds a chat app from scratch and moves his digital life off big tech.">
+<style>
+:root{
+  --bg:#f4f3fa; --text:#1a1830; --muted:#5a5878; --accent:#4f3bc9; --rule:#cfcbe6;
+  --mono:ui-monospace,"Cascadia Code","Cascadia Mono",Consolas,"SF Mono",Menlo,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#12121c; --text:#e6e6f2; --muted:#9a9ab5; --accent:#a89cff; --rule:#2c2c42;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12121c; --text:#e6e6f2; --muted:#9a9ab5; --accent:#a89cff; --rule:#2c2c42;
+  color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:var(--sans); font-size:1.05rem; line-height:1.6;
+  min-height:100vh;
+}
+main{
+  max-width:40rem; margin:0 auto;
+  padding:clamp(2.5rem,10vh,6rem) clamp(1.25rem,6vw,3rem) 3rem;
+}
+a{color:var(--accent); text-underline-offset:.2em}
+a:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:2px}
+
+/* Everything on the page types itself out */
+.term{font-family:var(--mono); font-size:.95rem; margin:0 0 1rem}
+.t{display:block; white-space:nowrap}
+.denied{color:var(--muted)}
+.js main{visibility:hidden}
+.js.ready main{visibility:visible}
+.c.h{visibility:hidden}
+.c.cur{box-shadow:2px 0 0 var(--accent)}
+.done .c.cur{animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{box-shadow:none}}
+
+h1{
+  font-family:var(--mono); font-weight:700;
+  font-size:clamp(2.6rem,12vw,5.5rem); line-height:1;
+  letter-spacing:-.04em; margin:0 0 1.25rem;
+}
+.lede{font-size:1.2rem; margin:0 0 3.5rem; max-width:34rem}
+
+h2{font-family:var(--mono); font-size:1.05rem; font-weight:600; margin:0 0 1.25rem}
+section{margin-bottom:3rem}
+
+.project{border-left:3px solid var(--accent); padding-left:1.1rem; margin:0 0 1.75rem}
+.project h3{font-family:var(--mono); font-size:1.05rem; margin:0 0 .3rem}
+.project p{margin:0; color:var(--text)}
+.project .meta{color:var(--muted); font-size:.95rem; margin-top:.35rem}
+
+.find{list-style:none; margin:0; padding:0}
+.find li{padding:.6rem 0; border-top:1px solid var(--rule); display:flex; flex-wrap:wrap; gap:.25rem 1rem}
+.find li:last-child{border-bottom:1px solid var(--rule)}
+.find .where{font-family:var(--mono); min-width:7.5rem; color:var(--muted)}
+
+footer{color:var(--muted); font-size:.9rem}
+
+@media (prefers-reduced-motion:reduce){
+  .done .c.cur{animation:none}
+}
+</style>
+<script>if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("js");</script>
+</head>
+<body>
+<main>
+  <div class="term" aria-hidden="true">
+    <span class="t">$ whoami</span>
+    <span class="t denied">bash: whoami: permission denied</span>
+    <span class="t">$ sudo whoami</span>
+  </div>
+  <h1>SudoJake</h1>
+  <p class="lede">I build my own tools so I can stop renting everyone else's.</p>
+
+  <section>
+    <h2>What I'm building</h2>
+    <div class="project">
+      <h3>Yapp</h3>
+      <p>A chat app written from scratch, because the good features of the big ones keep ending up behind a paywall. Servers, channels, real-time messages and invite links already work.</p>
+      <p class="meta">TypeScript, React, Fastify, Postgres. File uploads are next.</p>
+    </div>
+    <div class="project">
+      <h3>Leaving big tech</h3>
+      <p>Moving my accounts, search and media to services I trust or run myself, one category at a time.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Find me</h2>
+    <ul class="find">
+      <li><span class="where">Mastodon</span><a rel="me" href="https://cyberplace.social/@isj">@isj@cyberplace.social</a></li>
+      <li><span class="where">Twitter</span><a rel="me" href="https://x.com/iSudoJake">@iSudoJake</a></li>
+    </ul>
+  </section>
+
+  <footer>This page has no trackers, no cookies, and makes no requests to other sites.</footer>
+</main>
+<script>
+(function(){
+  var root=document.documentElement;
+  try{
+    if(!root.classList.contains("js")) return;
+    var main=document.querySelector("main");
+    var blocks=[].slice.call(main.querySelectorAll(".t,h1,.lede,h2,.project h3,.project p,.find li,footer"));
+    var plan=blocks.map(function(b){
+      var term=b.classList.contains("t"), head=b.tagName==="H1";
+      var spans=[], nodes=[], w=document.createTreeWalker(b,NodeFilter.SHOW_TEXT);
+      while(w.nextNode()) nodes.push(w.currentNode);
+      nodes.forEach(function(n){
+        if(!n.nodeValue.trim()) return;
+        var f=document.createDocumentFragment();
+        n.nodeValue.split("").forEach(function(ch){
+          var s=document.createElement("span");
+          s.className="c h"; s.textContent=ch;
+          f.appendChild(s); spans.push(s);
+        });
+        n.parentNode.replaceChild(f,n);
+      });
+      return {spans:spans, speed:term?40:head?75:6, pause:term?300:head?250:100};
+    });
+    root.classList.add("ready");
+    var bi=0, ci=0, last=null, timer=0, finished=false;
+    function show(s){
+      if(last) last.classList.remove("cur");
+      s.classList.remove("h"); s.classList.add("cur"); last=s;
+    }
+    function end(){ finished=true; document.body.classList.add("done"); }
+    function step(){
+      var blk=plan[bi];
+      if(!blk) return end();
+      if(ci<blk.spans.length){
+        var n=blk.speed<10?2:1;
+        for(var i=0;i<n && ci<blk.spans.length;i++) show(blk.spans[ci++]);
+        timer=setTimeout(step,blk.speed*n);
+      }else{
+        bi++; ci=0; timer=setTimeout(step,blk.pause);
+      }
+    }
+    function skip(){
+      if(finished) return;
+      clearTimeout(timer);
+      plan.forEach(function(b){ b.spans.forEach(function(s){ s.classList.remove("h"); }); });
+      if(last) last.classList.remove("cur");
+      var lb=plan[plan.length-1];
+      if(lb && lb.spans.length){ last=lb.spans[lb.spans.length-1]; last.classList.add("cur"); }
+      end();
+    }
+    ["click","keydown","touchstart"].forEach(function(e){ addEventListener(e,skip,{once:true}); });
+    step();
+  }catch(err){
+    root.classList.add("ready");
+    [].forEach.call(document.querySelectorAll(".c.h"),function(s){ s.classList.remove("h"); });
+  }
+})();
+</script>
+</body>
+</html>
